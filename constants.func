@@ -20,3 +20,6 @@ const error::contract_not_active = 1003;
 const error::file_too_small = 1004;
 const error::file_too_big = 1005;
 const error::no_new_contracts = 1006;
+const error::contract_already_active = 1007;
+const error::no_microchunk_hash = 1008;
+const error::provider_params_changed = 1009;
