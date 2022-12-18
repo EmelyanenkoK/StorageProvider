@@ -1,3 +1,5 @@
+![Interaction scheme](docs/scheme.png)
+
 # Storage Provider
 Simple smart-contract system for conclusion of a storage agreements.
 - guarantees that the provider stores the file
