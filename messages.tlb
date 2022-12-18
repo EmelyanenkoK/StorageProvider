@@ -1,0 +1,33 @@
+offer_storage_contract#107c49ef query_id:uint64 = InternalMsgBody;
+accept_storage_contract#7a361688 query_id:uint64 = InternalMsgBody;
+topup_contract_balance#0cbad589 query_id:uint64 = InternalMsgBody;
+close_contract#79f937ea query_id:uint64 = InternalMsgBody;
+withdraw#46ed2e94 query_id:uint64 = InternalMsgBody;
+proof_storage#419d5d4d query_id:uint64
+              ^[
+                active:Bool
+                balance:Coins
+                provider:MsgAddress
+                merkle_hash:int256
+                file_size:int64
+                next_proof_byte:int64
+                rate_per_mb_day:Coins
+                max_span:uint32
+                last_proof_time:uint32
+                client_data:^Cell
+              ] = InternalMsgBody;
+
+
+storage_contract_terminated#b6236d63 query_id:uint64 = InternalMsgBody;
+update_pubkey#53f34cd6 query_id:uint64 new_pub_key:uint256 = InternalMsgBody;
+update_storage_params#54cbf19b query_id:uint64
+                      accept_new_contracts:int1
+                      rate_per_mb_day:Coins
+                      max_span:uint32
+                      minimal_file_size:uint64
+                      maximal_file_size:uint64 = InternalMsgBody;
+
+
+storage_contract_deployed#bf7bd0c1 query_id:uint64 = InternalMsgBody;
+storage_contract_confirmed#d4caedcd query_id:uint64 = InternalMsgBody;
+reward_withdrawal#a91baf56 query_id:uint64 = InternalMsgBody;
