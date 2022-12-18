@@ -1,0 +1,42 @@
+body {
+    font-family: Helvetica, Arial, sans-serif;
+    text-align: center;
+}
+
+* {
+    box-sizing: border-box;
+}
+
+.h {
+    font-size: 28px;
+    color: #383a3b;
+    margin-top: 40px
+}
+
+.grey {
+    font-size: 17px;
+    color: #67696a;
+    margin-top: 20px
+}
+
+.button {
+    display: inline-block;
+    margin-top: 40px;
+    border-radius: 30px;
+    background-color: #1d98dc;
+    padding: 10px 44px;
+    color: white;
+    text-decoration: none;
+    font-size: 17px;
+    cursor: pointer;
+    border: none;
+}
+
+a, a:hover, a:active, a:focus {
+    color: #1d98dc;
+}
+
+.mono {
+      font-family: monospace;
+      color: #505254;
+}

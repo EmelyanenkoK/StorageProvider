@@ -1,0 +1,541 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Storage Contract dApp</title>
+    <link rel="stylesheet" href="mg-plus.min.css">
+    <style> --mg-color-primary:#1d98dc;</style>
+</head>
+<body>
+
+
+<div style="max-width: 800px;margin: auto;">
+    <h1>TON Storage dApp</h1>
+
+    <div id="error-panel" style="display:none; width:100%; min-height:50px;color: #a20909;background-color: #ffeef1;border-radius: 8px;">
+      <h3 id="error">AAAAAAAAAAAA</h3>
+    </div>
+
+    <div class="mg-tabs" data-toggle="tabs" id="tabs-example">
+        <ul>
+          <li class="mg-tabs--item active" data-target="tab1">
+            <a href="#" class="button--outline">Create Contract</a>
+          </li>
+          <li class="mg-tabs--item" data-target="tab2">
+            <a href="#" class="secondary">Provider info</a>
+          </li>
+          <li class="mg-tabs--item" data-target="tab3">
+            <a href="#" class="secondary">Manage contracts</a>
+          </li>
+          <li class="mg-tabs--item" data-target="tab4">
+            <a href="#" class="secondary">Helpers</a>
+          </li>
+        </ul>
+
+
+        <div class="mg-tabs--content" id="tab1">
+          <div class="grey" id="bag-id-panel" style="display:none;">
+              <span>Bag ID</span>
+              <blockquote>
+                <p><em id="bag-id"></em></p>
+              </blockquote>
+          </div>
+          <div class="mg-row">
+                  <div class="mg-col mg-x5">
+                    <div>
+                      <span>Upload files (up to 50 Mb) </span>
+                      <input type="file">
+                    </div>
+                    <span style="margin:auto;"> or </span>
+                    <div>
+                      <span>Insert Bag Id (for big files) </span>
+                      <input type="text">
+                    </div>
+
+                  </div>
+                  
+                  <div class="mg-col mg-x2">
+                   <!-- Spacer -->
+                  </div>
+                  
+                  <div class="mg-col mg-x5">
+                    <div style="margin:auto; padding-top:50px;">
+                        <input id="create-amount" type="number" step="0.000000001" min="0.1" style="width:50%;" value="0.3">
+                        <button id="create-contract-button" class="button">Create storage contract</button>
+                    </div>
+                  </div>
+                  </hr>
+                  <div style="margin:auto; padding-top:45px;">
+                    <div class="mg-timeline-inline" style="width: 700px;">
+                      <ul>
+                        <li id="insert-bag-id" class="current">
+                          <div>Insert Bag ID</div>
+                        </li>
+                        <li id="send-stc-request" class="">
+                          <div>Send Request</div>
+                        </li>
+                        <li id="waiting-registration" class="">
+                          <div id="registered">Register Contract</div>
+                        </li>
+                        <li id="waiting-confirmation">
+                          <div id="confirmed">Await provider confirmation</div>
+                        </li>
+                      </ul>
+                    </div>
+                    <div id="stc-address-panel" style="display:none;">
+                      <span>Storage Contract address</span>
+                      <blockquote>
+                        <p><em id="stc-address" ></em></p>
+                      </blockquote>
+                    </div>
+                  </div>
+
+          </div>
+          <div class="grey">
+            <span id="confirmed"></span>
+          </div>
+        </div>
+
+        
+        <div class="mg-tabs--content" id="tab2">
+          <div class="grey">
+              <span>Storage Provider address</span>
+              <blockquote>
+                <p><em id="sp-address" >EQDYOjKYmTfqw52aYrJIVrw5sbUPUPErUiCOcgvKGd4mn6Wv</em></p>
+              </blockquote>
+          </div>
+          <table>
+            <tbody>
+              <tr>
+                <td>Open</td>
+                <td id="accept_new_contracts">Not loaded</td>
+              </tr>
+              <tr>
+                <td>Rate per Mb per Day</td>
+                <td id="rate_per_mb_day">Not loaded</td>
+              </tr>
+              <tr>
+                <td>Max span between proofs</td>
+                <td id="max_span">Not loaded</td>
+              </tr>
+              <tr>
+                <td>Minimal File Size</td>
+                <td id="minimal_file_size">Not loaded</td>
+              </tr>
+              <tr>
+                <td>Maximal File Size</td>
+                <td id="maximal_file_size">Not loaded</td>
+              </tr>
+            </tbody>
+          </table>
+          <button class="button button--outline" id="load-provider-data">Load data</button>
+        </div>
+
+
+
+
+
+        <div class="mg-tabs--content" id="tab3">
+                    <div>
+                      <span>Insert Storage contract address</span>
+                      <input id="read-stc-address" type="text">
+                      <button id="read-stc" class="button button--outline">Read contract data</button>
+                    </div>
+                    <h4 id="stc-not-found" style="display:none"> Storage contract not found</h4>
+                    <table class="entity-panel" id="stc-data" style="display:none;">
+                      <th colspan=4>
+                                    <div class="overview-row overview-title">
+                                        Storage Contract info
+                                    </div>
+                      </th>
+                      <tr>
+                        <td> Active </td>
+                        <td id="stc_active"> </td>
+                        <td> Balance </td>
+                        <td id="stc_balance"> </td>
+                      </tr>
+                      <tr>
+                        <td> Provider </td>
+                        <td id="stc_provider" colspan=3> </td>
+                      </tr>
+                      <tr>
+                        <td> File size </td>
+                        <td id="stc_file_size"> </td>
+                        <td> Rate per MB per day </td>
+                        <td id="stc_rate_per_mb_day"> </td>
+                      </tr>
+                      <tr>
+                        <td> Client </td>
+                        <td id="stc_client" colspan=3> </td>
+                      </tr>
+                    </table>
+                    <div class="mg-row" id="stc-actions" style="display:none;">
+                       <div class="mg-col mg-x5"  style="display:block;">
+                         <input id="topup-amount" type="number" step="0.000000001" min="0.1" style="width:50%;" value="1.0">
+                         <button id="topup-stc" class="button" style="width:45%;">Top-up balance</button>
+                       </div>
+                       <div class="mg-col mg-x2">
+                       </div>
+                       <div class="mg-col mg-x5">
+                         <button id="cancel-stc" class="button">Cancel contract</button>
+                       </div>
+                    </div>
+        </div>
+        
+        
+        
+        <div class="mg-tabs--content" id="tab4">
+          <h3>To be deleted for production</h3>
+                    <div>
+                        <button id="new-bag-button" class="button button--outline">Generage new Bag ID (stub)</button>
+                    </div>          
+                    <div>
+                        <button id="create-provider-button" class="button">Create new provider (helper)</button>
+                    </div>
+        </div>        
+    </div>
+
+    
+    <div id="address" style="display:none;"></div>
+</div>
+<script type="text/javascript" src="./tonweb.js"></script>
+<script type="text/javascript" src="./helper.js"></script>
+<script type="text/javascript" src="./mg-plus-extensions.min.js"></script>
+
+<script>
+    // Use tonweb
+
+    const tonweb = new TonWeb(new TonWeb.HttpProvider('https://testnet.toncenter.com/api/v2/jsonRPC'));
+    const op_new_storage_contract = 0x107c49ef;
+    const op_topup_balance = 0x0cbad589;
+    const op_close_contract = 0x79f937ea;
+    const op_contract_registered = 0xbf7bd0c1;
+    // Use extension
+
+    const onTonReady = () => {
+        console.log('tonready');
+
+        if (!window.tonProtocolVersion || window.tonProtocolVersion < 1) {
+            alert('Please update your TON Wallet Extension');
+            return;
+        }
+
+        const provider = window.ton;
+        console.log('isTonWallet=', provider.isTonWallet);
+
+        const connect = async () => {
+            // Request account access if needed
+            const accounts = await provider.send('ton_requestAccounts');
+            // Accounts now exposed, use them
+            const account = accounts[0] // We currently only ever provide a single account,
+                    // but the array gives us some room to grow.
+            showAccountAddress(account);
+
+            console.log(await provider.send('ton_requestWallets'));
+        }
+
+        $('#create-provider-button').addEventListener('click', async () => {
+            try {
+                await connect();
+                let code = "B5EE9C724102290100054E000114FF00F4A413F4BCF2C80B0102012002030201480405009EF28308D71820D31FD31FD31F02F823BBF263ED44D0D31FD31FD3FF5143BAF2A15151BAF2A205F901541064F910F2A3F800019320D74A96D307D402FB00E83003A4C8CB1F12CB1FCBFF01CF16C9ED540202CE0607020120212202012008090201200C0D02E93B7EC07434C0C05C6C2497C0F83E900C0074C7F4CFC8A084041F127BEEA38C4C80E082BEBC202FBCB8FA75087E4000B4200835C874CFE0409035C87480007CB8FC35C2FFC0BE8034C7CC041584093C00F80C4CC820842D88DB58EEA497C0F808208414FCD335AEB8C020841532FC66EEA456F8C3600A0B001B3E401C1D3232C0B281F2FFF27420004AF82822C705B3945F03DB31E0ED44D0D63FD3FF3104D3FFC85003CF16CBFF5004CF16C9ED540068F82801C705B39330DB31E0ED44D0810140D7183001D200FA00D31FD33FD33F30C85006CF1614CA0058FA02CB1FCB3FCB3FC9ED540169321633C5B2FFF25C14C0323280087E80BE0A33C585F2FFC572CFC572CFD63E80B2C7F2C7F3325C22087232C07D0004BD0032C032600E00AB3B513420405035C60C74803E8034C7F4CFF4CFCC013CB8FB94A02FBCB8FB149CEEFCB8FB544CEEBCB8FC59AEBCB8FC568545BC00A084041F127BDDA0063232C148FC0073C59C3E80B2DAC4B332C7F2CFF260103EC0200114FF00F4A413F4BCF2C80B0F02016210110202CE12130201201B1C020120141500115D74CD0FA40D3FF30804EB007434C0C05C6C2497C0F83E900C0074C7F4CFC8A084041F127BEEA3AD4920829896802876CF3B51343C00E0842FDEF4305C20063232C1540133C5A0824C4B403E8084F2DA84B2C7D48C32CFF2FFF25C3EC03788A0841E8D85A22EB8C008A084032EB5626EA3A117C136CF380D0860841E7E4DFAAEA017161718006F35CE6CE4D7C11C3834C1C070C0E4D7C11C3834FFC12F64D7C0DC3800B50C1C25A010086B092E64693A0CC06AC140BD039BE84C645FF81C20009EED44D0D200FA00FA4003B3F2E3EF5360C705F2E1917FC8CA0058FA0201CF1621CF16C9ED54F003F8258210D4CAEDCD708018C8CB055005CF168209312D00FA0214CB6A13CB1F12CB3FCBFFC970FB00002CED44D0D200FA0003A001C8CA0001FA0201CF16C9ED5401FE8E7510235F03ED44D0D200FA00FA40F0035352C7055162C70516B1F2E191F8258210B6236D63708018C8CB055004CF165005FA0212CB6A13CB1F12CB3F5230CBFFC902B39730318100A0FB00E0018040FB00F8258210B6236D63708018C8CB055004CF1623FA0213CB6A12CB1FCB3FCBFFC98100A0FB00E021821046ED2E941901B4BA8E49ED44D0D200FA00FA403002F2E3EB5341C705F2E19120C200998208989680A072FB029130E28210A91BAF56708018C8CB055003CF168209312D00FA0212CB6ACB1FCB3FC98100A0FB009130E28210419D5D4DBA915BE30D1A00FA01D430ED44D0D200FA00FA40D3FFD33FD33FFA00D31FD31FD43009F2E3EB53A6C705F2E191544540525BF001F2E3EA22F811F8235003A128B6085331A8018102A3AA1AA984067007A116B609F8237FC8CA0058FA025005CF1613CBFFCB3FCB3F58FA0213CB1F12CB1FCCC9ED54708018C8CB0558CF16CB6EC98042FB000201201D1E0011BEE6576A2686B850040201201F200033B9241ED44D0D200FA00FA40D3FFD33FD33FFA00D31FD31FF00380017B6E4F0402A483DA87B0D9430001BB7CA50402A483DA87B0B664D8A70020120232402012025260017BB39CED44D0D33F31D70BFF80011B8C97ED44D0D70B1F8002DB979AED44D0810140D71831D200FA00D31FD33FD33F30802012027280023B676304032F35DA87B0B6648267E005E00300019B79BFDA89A1A63FA63FA7FE610BEFDF774";
+                const contract = new tonweb.Contract(provider, {code:tonweb.boc.Cell.fromBoc(tonweb.utils.hexToBytes(code))[0]})
+                const storage = new tonweb.boc.Cell();
+                storage.bits.writeUint(0, 32);
+                storage.bits.writeUint(((new Date()).getTime() / 1000).toFixed(0), 32); // wallet-id
+                storage.bits.writeUint(0, 256); // pubkey
+                storage.bits.writeUint(1, 1);
+                storage.bits.writeGrams(2000);
+                storage.bits.writeUint(3000, 32);
+                storage.bits.writeUint(1, 64);
+                storage.bits.writeUint(10000000000+(new Date()).getTime() % 1000, 64);
+                
+                contract.createDataCell = () => {return storage};
+                const address = (await contract.getAddress()).toString(true, true, true, false);
+                $('#sp-address').innerHTML = makeAddressUrl(address);
+                // Send TONs
+                const stateInit = (await contract.createStateInit()).stateInit;
+                let payload = new tonweb.boc.Cell();
+                payload.bits.writeUint(0, 32); // op = new_storage_contract
+                let query_id = ((new Date()).getTime() / 1000).toFixed(0);
+                payload.bits.writeUint(query_id, 64); // op = new_storage_contract
+
+                provider.send(
+          'ton_sendTransaction',
+          [{
+              to: address,
+              value: '200000000', // 10000 nanotons = 0.00001 TONs
+              stateInit: tonweb.utils.bytesToBase64(await stateInit.toBoc()),
+              data: tonweb.utils.bytesToBase64(await payload.toBoc()),
+              dataType: "boc" 
+          }]
+                );
+            } catch (error) {
+                // User denied or Error
+                console.log(error);
+            }
+        });
+
+        $('#new-bag-button').addEventListener('click', async () => {
+          
+          const genRanHex = size => [...Array(size)].map(() => Math.floor(Math.random() * 16).toString(16)).join('');
+          $('#bag-id-panel').style.display = "block";
+          $('#bag-id').innerText = genRanHex(64);
+          $('#insert-bag-id').classList.remove("current");
+          $('#insert-bag-id').classList.add("active");
+          $('#send-stc-request').classList.add("current");
+        });
+
+
+        $('#create-contract-button').addEventListener('click', async () => {
+
+          // TODO payload will be generated by storage-daemon-cli
+          
+          let torrent_info = new tonweb.boc.Cell();
+          torrent_info.bits.writeUint(0, 32); //piece_size
+          torrent_info.bits.writeUint(500, 64); //filesize
+          torrent_info.bits.writeUint(0, 256); //root_hash
+          torrent_info.bits.writeUint(0, 64); //header_size
+          torrent_info.bits.writeBytes(tonweb.utils.hexToBytes($('#bag-id').innerText)); //header_hash
+          torrent_info.bits.writeUint(1, 1); //microchunk
+          torrent_info.bits.writeUint(1, 256); //merkle hash
+
+          if(!$('#bag-id').innerText) {
+            showAlert("empty bag id");
+            return;
+          }
+
+          let payload = new tonweb.boc.Cell();
+          payload.bits.writeUint(op_new_storage_contract, 32); // op = new_storage_contract
+          let query_id = ((new Date()).getTime() / 1000).toFixed(0);
+          payload.bits.writeUint(query_id, 64); //qeury_id
+          payload.bits.writeGrams(2000);
+          payload.bits.writeUint(3000, 32);
+          payload.refs.push(torrent_info);
+          let storage_provider = $('#sp-address').innerText;
+          
+          provider.send(
+          'ton_sendTransaction',
+          [{
+              to: storage_provider,
+              value: $("#create-amount").value*1e9, // 10000 nanotons = 0.00001 TONs
+              data: tonweb.utils.bytesToBase64(await payload.toBoc()),
+              dataType: "boc" 
+          }]
+                );
+          $('#send-stc-request').classList.remove("current");
+          $('#send-stc-request').classList.add("active");
+          $('#waiting-registration').classList.add("current");
+          waitStorageContract(query_id); 
+          
+        });
+        /*$('#button').addEventListener('click', async () => {
+            try {
+                await connect();
+
+                // Send TONs
+                provider.send(
+          'ton_sendTransaction',
+          [{
+              to: 'EQCD39VS5jcptHL8vMjEXrzGaRcCVYto7HUn4bpAOg8xqB2N', // TON Foundation
+              value: '10000', // 10000 nanotons = 0.00001 TONs
+              data: 'dapp test',
+              dataType: 'text'
+          }]
+                );
+            } catch (error) {
+                // User denied or Error
+                console.log(error);
+            }
+        });
+
+        $('#signButton').addEventListener('click', async () => {
+            try {
+                await connect();
+
+                // Sign custom hex
+                const signature = await provider.send(
+          'ton_rawSign',
+          [{
+              data: 'ABCDEF0123456789ABCDEF0123456789ABCDEF0123456789ABCDEF0123456789ABCDEF0123456789'
+          }]
+                );
+                console.log('signature is ' + signature);
+            } catch (error) {
+                // User denied or Error
+                console.log(error);
+            }
+        });*/
+
+        provider.on('accountsChanged', function (accounts) {
+
+            const account = accounts[0];
+            showAccountAddress(account);
+        });
+
+        function showAccountAddress(address) {
+            $('#address').innerText = address;
+        }
+        
+        async function waitStorageContract(query_id) {
+           let myAccount = $('#address').innerText;
+           let receiptFound = false;
+           $('#registered').innerText = "Registering 🕛";
+           await new Promise(r => setTimeout(r, 1100));
+           
+           while(!receiptFound) {
+             let txses = await tonweb.provider.getTransactions(myAccount);
+             if(!txses.length) {
+               continue;
+             }
+             try{
+               let payload = tonweb.boc.Cell.fromBoc(tonweb.utils.base64ToBytes(txses[0].in_msg.msg_data.body))[0];
+               let op = payload.bits.readUint(32).toNumber();
+               let received_query_id = payload.bits.readUint(64).toNumber();
+               if (op == op_contract_registered && query_id == received_query_id) {
+                 $('#registered').innerText = "Registered ☑️";
+                 receiptFound = true;
+                 $('#stc-address-panel').style.display="block";
+                 $('#stc-address').innerHTML = makeAddressUrl(txses[0].in_msg.source);
+               } else {
+                 let current = $('#registered').innerText;
+                 current = current.slice(current.length - 2);
+                 let nexts = {"🕛":"🕒", "🕒":"🕕", "🕕":"🕘", "🕘":"🕛"};
+                 if(current in nexts) {
+         next = nexts[current];
+                 }
+                 $('#registered').innerText = "Registering "+next;
+               }
+             } catch {
+             }
+             await new Promise(r => setTimeout(r, 1100));
+           }
+           waitStorageContractRegistered();
+           $('#waiting-registration').classList.remove("current");
+           $('#waiting-registration').classList.add("active");
+           $('#waiting-confirmation').classList.add("current");
+        }
+        async function waitStorageContractRegistered() {
+           let stc = $('#stc-address').innerText;
+           let confirmed = false;
+           $('#confirmed').innerText = "Waiting for confirmation 🕛";
+           await new Promise(r => setTimeout(r, 1100));
+           
+           while(!confirmed) {
+             let contract_data = await tonweb.provider.call2(stc, "get_storage_contract_data", []);
+             if (contract_data[0].toNumber() == 1) {
+               confirmed = true;
+               $('#confirmed').innerText = "Provider accepted contract ☑️";
+             } else {
+                 let current = $('#confirmed').innerText;
+                 current = current.slice(current.length - 2);
+                 let nexts = {"🕛":"🕒", "🕒":"🕕", "🕕":"🕘", "🕘":"🕛"};
+                 if(current in nexts) {
+         next = nexts[current];
+                 }
+                 $('#confirmed').innerText = "Waiting for confirmation "+next;
+             }
+             await new Promise(r => setTimeout(r, 1100));
+           }
+        }
+
+      async function readStCData () {
+        let stc_address = $('#read-stc-address').value;
+        try {
+            let stc_data = await tonweb.provider.call2(stc_address, "get_storage_contract_data", []);
+            let p = stc_data;
+            $("#stc_active").innerText = p[0].toNumber() ? "True" : "False";
+            $("#stc_balance").innerText = showValue(p[1],true);
+            $("#stc_provider").innerHTML =  makeAddressUrl(parse_text_address(p[2]));
+            $("#stc_file_size").innerText = p[4];
+            $("#stc_rate_per_mb_day").innerText = showValue(p[6], true);
+            let address = parse_text_address(p[9]);
+            $("#stc_client").innerHTML = makeAddressUrl(address);
+            $("#stc-data").style.display = "flex";
+            $("#stc-not-found").style.display = "none";
+            if (address == $('#address').innerText) {
+              $("#stc_client").innerHTML += "(You)";
+              $("#stc-actions").style.display = "flex";
+            }
+         } catch {
+           $("#stc-not-found").style.display = "flex";
+           $("#stc-data").style.display = "none";
+         }
+      }
+
+      $('#read-stc').addEventListener('click', readStCData);
+
+
+      $('#topup-stc').addEventListener('click', async () => {
+          let stc_address = $('#read-stc-address').value;
+          let payload = new tonweb.boc.Cell();
+          payload.bits.writeUint(op_topup_balance, 32); // op = new_storage_contract
+          let query_id = ((new Date()).getTime() / 1000).toFixed(0);
+          payload.bits.writeUint(query_id, 64); //qeury_id
+          
+          provider.send(
+          'ton_sendTransaction',
+          [{
+              to: stc_address,
+              value: $('#topup-amount').value*1e9, // 10000 nanotons = 0.00001 TONs
+              data: tonweb.utils.bytesToBase64(await payload.toBoc()),
+              dataType: "boc" 
+          }]
+                );
+          await new Promise(r => setTimeout(r, 5000));
+          readStCData();
+          await new Promise(r => setTimeout(r, 5000));
+          readStCData();
+      });
+
+      $('#cancel-stc').addEventListener('click', async () => {
+          let stc_address = $('#read-stc-address').value;
+          let payload = new tonweb.boc.Cell();
+          payload.bits.writeUint(op_close_contract, 32); // op = new_storage_contract
+          let query_id = ((new Date()).getTime() / 1000).toFixed(0);
+          payload.bits.writeUint(query_id, 64); //qeury_id
+          
+          provider.send(
+          'ton_sendTransaction',
+          [{
+              to: stc_address,
+              value: "30000000", // 10000 nanotons = 0.00001 TONs
+              data: tonweb.utils.bytesToBase64(await payload.toBoc()),
+              dataType: "boc" 
+          }]
+                );
+          await new Promise(r => setTimeout(r, 5000));
+          readStCData();
+          await new Promise(r => setTimeout(r, 5000));
+          readStCData();
+      });
+      async function showAlert(text) {
+        $("#error").innerText = "Error: "+text;
+        $("#error-panel").style.display = "block";
+        await new Promise(r => setTimeout(r, 3500));
+        $("#error-panel").style.display = "none";
+      }
+
+      async function loadProviderData () {
+        let storage_provider = $('#sp-address').innerText;
+        let provider_data = await tonweb.provider.call2(storage_provider, "get_storage_params", []);
+        $('#accept_new_contracts').innerText = provider_data[0].toNumber() ? "True" : "False" ;
+        $('#rate_per_mb_day').innerText = showValue(provider_data[1].toNumber());
+        $('#max_span').innerText = provider_data[2].toNumber() + " sec";
+        $('#minimal_file_size').innerText = provider_data[3].toNumber() + " bytes";
+        $('#maximal_file_size').innerText = provider_data[4].toNumber() + " bytes";
+      }
+      $('#load-provider-data').addEventListener('click', loadProviderData);
+      loadProviderData();
+      $('#sp-address').innerHTML = makeAddressUrl("EQDYOjKYmTfqw52aYrJIVrw5sbUPUPErUiCOcgvKGd4mn6Wv");
+    }
+
+    // Initialize TON
+
+    if (window.ton) {
+        onTonReady();
+    } else {
+        window.addEventListener('tonready', () => onTonReady(), false);
+    }
+</script>
+</body>
+</html>
