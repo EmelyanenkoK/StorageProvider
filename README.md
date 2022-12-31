@@ -1,3 +1,7 @@
+# Archived
+1. Recent smart contract code is in [ton node repository](https://github.com/ton-blockchain/ton/tree/testnet/storage/storage-daemon/smartcont).
+2. Dapp code is in https://github.com/ndatg/tonstorage-dapp-html
+
 ![Interaction scheme](docs/scheme.png)
 
 # Storage Provider
